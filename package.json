@@ -1,0 +1,23 @@
+{
+  "name": "com.kalkuz.jsonlocalization",
+  "version": "0.0.1",
+  "displayName": "Kalkuz Json Localization",
+  "description": "A Localization System that makes use of json localized source files.",
+  "category": "Tools",
+  "unity": "2020.3",
+  "unityRelease": "21f1",
+  "documentationUrl": "",
+  "changelogUrl": "",
+  "licensesUrl": "",
+  "dependencies": {
+ },
+ "keywords": [
+    "scripts",
+    "tools"
+  ],
+  "author": {
+    "name": "Oğuzhan Kalkuz",
+    "email": "oguzhan@kalkuz.me",
+    "url": ""
+  }
+}
