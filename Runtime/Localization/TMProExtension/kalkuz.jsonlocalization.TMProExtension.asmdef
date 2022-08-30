@@ -1,0 +1,25 @@
+{
+    "name": "kalkuz.jsonlocalization.TMProExtension",
+    "rootNamespace": "KalkuzSystems.Localization",
+    "references": [
+        "Unity.TextMeshPro",
+        "kalkuz.jsonlocalization"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "USE_TMPRO"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.textmeshpro",
+            "expression": "",
+            "define": "USE_TMPRO"
+        }
+    ],
+    "noEngineReferences": false
+}

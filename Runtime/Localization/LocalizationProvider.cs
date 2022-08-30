@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace KalkuzSystems.Localization
@@ -10,10 +12,16 @@ namespace KalkuzSystems.Localization
         private static string LOCALIZATION_FOLDER_PATH => Path.Combine(Application.dataPath, "Localization");
 
         private static LocalizationProvider m_instance;
-        private Action onLocaleChanged;
-
-        public static Action OnLocaleChanged => m_instance.onLocaleChanged;
         
+        private Dictionary<string, string> strings;
+        
+        private Action onLocaleChanged;
+        public static Action OnLocaleChanged
+        {
+            get => m_instance.onLocaleChanged;
+            set => m_instance.onLocaleChanged = value;
+        }
+
         private void Awake()
         {
             EnsureDirectoryExistence();
@@ -23,6 +31,7 @@ namespace KalkuzSystems.Localization
         private IEnumerator Start()
         {
             yield return null;
+            LoadLocalizationAsset(locale);
         }
         
         private void EnsureInstanceExistence()
@@ -47,24 +56,58 @@ namespace KalkuzSystems.Localization
         }
         
         private string GetJsonPath(string localeID) => Path.Combine(LOCALIZATION_FOLDER_PATH, $"{localeID}.json");
+        
+        private void LoadLocalizationAsset(string localeID)
+        {
+            var jsonPath = GetJsonPath(localeID);
+            if (!File.Exists(jsonPath))
+            {
+                Debug.Log($"{localeID}.json is not found in localization folder.");
+                return;
+            }
+            
+            string json;
+            using (StreamReader reader = new StreamReader(jsonPath))
+            {
+                json = reader.ReadToEnd();
+            }
+            strings = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            
+            onLocaleChanged?.Invoke();
+        }
+        public static string TryReadLocalizedString(string key)
+        {
+            if (m_instance.strings.TryGetValue(key, out string value))
+            {
+                return value;
+            }
+            else
+            {
+                Debug.LogWarning($"Key '{key}' is not found in the localization asset.");
+                return "";
+            }
+        }
 
         #region Test Area
 
+        public string locale;
+        public string searchKey;
+        
         [ContextMenu("Test")]
         public void Test()
         {
             EnsureDirectoryExistence();
 
-            var englishPath = GetJsonPath("en");
-            if (!File.Exists(englishPath))
-            {
-                Debug.Log("en.json is not found. Creating one...");
-                File.CreateText(englishPath); 
-                
-#if UNITY_EDITOR
-                UnityEditor.AssetDatabase.Refresh();
-#endif
-            }
+            LoadLocalizationAsset(locale);
+            Debug.Log(TryReadLocalizedString(searchKey));
+        }
+        
+        [ContextMenu("Load Locale")]
+        public void LoadLocale()
+        {
+            EnsureDirectoryExistence();
+
+            LoadLocalizationAsset(locale);
         }
 
         #endregion
