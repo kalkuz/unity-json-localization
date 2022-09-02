@@ -9,18 +9,18 @@ namespace KalkuzSystems.Localization
 {
     public class LocalizationProvider : MonoBehaviour
     {
-        private static string LOCALIZATION_FOLDER_PATH => Path.Combine(Application.dataPath, "Localization");
+        private static string LOCALIZATION_FOLDER_PATH => Path.Combine(Application.streamingAssetsPath, "Localization");
         private static string PLAYER_PREFS_LAST_LOCALE_KEY => "localization-preference";
 
         private static LocalizationProvider m_instance;
         
         private Dictionary<string, string> strings;
         
-        private Action onLocaleChanged;
+        private static Action m_onLocaleChanged;
         public static Action OnLocaleChanged
         {
-            get => m_instance.onLocaleChanged;
-            set => m_instance.onLocaleChanged = value;
+            get => m_onLocaleChanged;
+            set => m_onLocaleChanged = value;
         }
 
         [SerializeField] private string defaultLocale = "en";
@@ -54,11 +54,11 @@ namespace KalkuzSystems.Localization
             }
             else m_instance = this;
         }
-        private void EnsureDirectoryExistence()
+        private static void EnsureDirectoryExistence()
         {
             if (Directory.Exists(LOCALIZATION_FOLDER_PATH)) return;
             
-            Debug.Log("Assets/Localization directory did not exist. Creating...");
+            Debug.Log("StreamingAssets/Localization directory did not exist. Creating...");
             Directory.CreateDirectory(LOCALIZATION_FOLDER_PATH);
 
 #if UNITY_EDITOR
@@ -66,21 +66,21 @@ namespace KalkuzSystems.Localization
 #endif
         }
         
-        private string GetJsonPath(string localeID) => Path.Combine(LOCALIZATION_FOLDER_PATH, $"{localeID}.json");
+        private static string GetJsonPath(string localeID) => Path.Combine(LOCALIZATION_FOLDER_PATH, $"{localeID}.json");
 
         public static void ChangeLocale(string localeID)
         {
             m_instance.LoadLocalizationAsset(localeID);
             PlayerPrefs.SetString(PLAYER_PREFS_LAST_LOCALE_KEY, localeID);
             
-            m_instance.onLocaleChanged?.Invoke();
+            m_onLocaleChanged?.Invoke();
         }
         private void LoadLocalizationAsset(string localeID)
         {
             var jsonPath = GetJsonPath(localeID);
             if (!File.Exists(jsonPath))
             {
-                Debug.Log($"{localeID}.json is not found in localization folder.");
+                Debug.Log($"StreamingAssets/Localization/{localeID}.json is not found.");
                 return;
             }
             
@@ -103,5 +103,35 @@ namespace KalkuzSystems.Localization
                 return "";
             }
         }
+
+        #region Menus
+
+#if UNITY_EDITOR
+        [UnityEditor.MenuItem("Kalkuz Systems/Json Localization/Initialize Localization Assets")]
+        static void InitializeLocalizationSystem()
+        {
+            EnsureDirectoryExistence();
+            
+            var jsonPath = GetJsonPath("en");
+            if (!File.Exists(jsonPath))
+            {
+                Debug.Log("StreamingAssets/Localization/en.json is not found. Creating...");
+                using (StreamWriter sw = File.CreateText(jsonPath))
+                {
+                    var dict = new Dictionary<string, string>()
+                    {
+                        {"example", "This is an example entry."},
+                        {"start", "Start the game"}
+                    };
+                    var json = JsonConvert.SerializeObject(dict, Formatting.Indented);
+                    
+                    sw.Write(json);
+                }
+            }
+            UnityEditor.AssetDatabase.Refresh();
+        } 
+#endif
+
+        #endregion
     }
 }

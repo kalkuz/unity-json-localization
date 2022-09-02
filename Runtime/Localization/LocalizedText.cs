@@ -4,12 +4,13 @@ using UnityEngine.UI;
 
 namespace KalkuzSystems.Localization
 {
+    [RequireComponent(typeof(Text))]
     public class LocalizedText : MonoBehaviour
     {
         [SerializeField] private Text text;
         [SerializeField] private string localizationKey;
 
-        [Space, SerializeField] private bool listenLocalizationChanges;
+        [Space, SerializeField] private bool listenLocalizationChanges = true;
 
         private void OnEnable()
         {
@@ -21,6 +22,11 @@ namespace KalkuzSystems.Localization
         }
 
         private void OnLocaleChanged()
+        {
+            SetLocalizedText();
+        }
+
+        public void SetLocalizedText()
         {
             text.text = LocalizationProvider.TryReadLocalizedString(localizationKey);
         }
