@@ -9,9 +9,15 @@ namespace KalkuzSystems.Localization
         [SerializeField] private Text text;
         [SerializeField] private string localizationKey;
 
-        private void Start()
+        [Space, SerializeField] private bool listenLocalizationChanges;
+
+        private void OnEnable()
         {
-            LocalizationProvider.OnLocaleChanged += OnLocaleChanged;
+            if (listenLocalizationChanges) LocalizationProvider.OnLocaleChanged += OnLocaleChanged;
+        }
+        private void OnDisable()
+        {
+            if (listenLocalizationChanges) LocalizationProvider.OnLocaleChanged -= OnLocaleChanged;
         }
 
         private void OnLocaleChanged()

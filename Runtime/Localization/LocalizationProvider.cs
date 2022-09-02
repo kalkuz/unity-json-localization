@@ -10,6 +10,7 @@ namespace KalkuzSystems.Localization
     public class LocalizationProvider : MonoBehaviour
     {
         private static string LOCALIZATION_FOLDER_PATH => Path.Combine(Application.dataPath, "Localization");
+        private static string PLAYER_PREFS_LAST_LOCALE_KEY => "localization-preference";
 
         private static LocalizationProvider m_instance;
         
@@ -22,6 +23,8 @@ namespace KalkuzSystems.Localization
             set => m_instance.onLocaleChanged = value;
         }
 
+        [SerializeField] private string defaultLocale = "en";
+ 
         private void Awake()
         {
             EnsureDirectoryExistence();
@@ -31,7 +34,15 @@ namespace KalkuzSystems.Localization
         private IEnumerator Start()
         {
             yield return null;
-            LoadLocalizationAsset(locale);
+            
+            if (PlayerPrefs.HasKey(PLAYER_PREFS_LAST_LOCALE_KEY))
+            {
+                ChangeLocale(PlayerPrefs.GetString(PLAYER_PREFS_LAST_LOCALE_KEY, defaultLocale));
+            }
+            else
+            {
+                ChangeLocale(defaultLocale);
+            }
         }
         
         private void EnsureInstanceExistence()
@@ -56,7 +67,14 @@ namespace KalkuzSystems.Localization
         }
         
         private string GetJsonPath(string localeID) => Path.Combine(LOCALIZATION_FOLDER_PATH, $"{localeID}.json");
-        
+
+        public static void ChangeLocale(string localeID)
+        {
+            m_instance.LoadLocalizationAsset(localeID);
+            PlayerPrefs.SetString(PLAYER_PREFS_LAST_LOCALE_KEY, localeID);
+            
+            m_instance.onLocaleChanged?.Invoke();
+        }
         private void LoadLocalizationAsset(string localeID)
         {
             var jsonPath = GetJsonPath(localeID);
@@ -72,8 +90,6 @@ namespace KalkuzSystems.Localization
                 json = reader.ReadToEnd();
             }
             strings = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            
-            onLocaleChanged?.Invoke();
         }
         public static string TryReadLocalizedString(string key)
         {
@@ -87,29 +103,5 @@ namespace KalkuzSystems.Localization
                 return "";
             }
         }
-
-        #region Test Area
-
-        public string locale;
-        public string searchKey;
-        
-        [ContextMenu("Test")]
-        public void Test()
-        {
-            EnsureDirectoryExistence();
-
-            LoadLocalizationAsset(locale);
-            Debug.Log(TryReadLocalizedString(searchKey));
-        }
-        
-        [ContextMenu("Load Locale")]
-        public void LoadLocale()
-        {
-            EnsureDirectoryExistence();
-
-            LoadLocalizationAsset(locale);
-        }
-
-        #endregion
     }
 }
