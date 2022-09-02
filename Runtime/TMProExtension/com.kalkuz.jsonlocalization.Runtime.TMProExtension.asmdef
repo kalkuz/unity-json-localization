@@ -1,9 +1,9 @@
 {
-    "name": "kalkuz.jsonlocalization.TMProExtension",
+    "name": "com.kalkuz.jsonlocalization.Runtime.TMProExtension",
     "rootNamespace": "KalkuzSystems.Localization",
     "references": [
         "Unity.TextMeshPro",
-        "kalkuz.jsonlocalization"
+        "com.kalkuz.jsonlocalization.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

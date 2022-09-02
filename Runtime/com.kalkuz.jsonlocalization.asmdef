@@ -1,5 +1,5 @@
 {
-    "name": "kalkuz.jsonlocalization",
+    "name": "com.kalkuz.jsonlocalization.Runtime",
     "rootNamespace": "KalkuzSystems.Localization",
     "references": [],
     "includePlatforms": [],

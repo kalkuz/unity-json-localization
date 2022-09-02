@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -29,6 +30,7 @@ namespace KalkuzSystems.Localization
         {
             EnsureDirectoryExistence();
             EnsureInstanceExistence();
+            GetLocales();
         }
         
         private IEnumerator Start()
@@ -102,6 +104,13 @@ namespace KalkuzSystems.Localization
                 Debug.LogWarning($"Key '{key}' is not found in the localization asset.");
                 return "";
             }
+        }
+        public static List<string> GetLocales()
+        {
+            var dirs = Directory.GetFiles(LOCALIZATION_FOLDER_PATH);
+            var files = dirs.Select((dir) => dir.Split(Path.DirectorySeparatorChar).Last());
+            var locales = files.Where((f) => !f.Contains(".meta")).Select((f) => f.Split('.')[0]).ToList();
+            return locales;
         }
 
         #region Menus

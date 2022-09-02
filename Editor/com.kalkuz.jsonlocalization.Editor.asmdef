@@ -1,0 +1,18 @@
+{
+    "name": "com.kalkuz.jsonlocalization.Editor",
+    "rootNamespace": "KalkuzSystems.Localization",
+    "references": [
+        "GUID:afc73ee07be18f84db26fff0559edb82"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
