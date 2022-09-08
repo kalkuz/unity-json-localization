@@ -95,6 +95,8 @@ namespace KalkuzSystems.Localization
         }
         public static string TryReadLocalizedString(string key)
         {
+            if (m_instance == null) return "";
+            
             if (m_instance.strings.TryGetValue(key, out string value))
             {
                 return value;

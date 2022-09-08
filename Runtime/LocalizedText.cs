@@ -15,6 +15,8 @@ namespace KalkuzSystems.Localization
         private void OnEnable()
         {
             if (listenLocalizationChanges) LocalizationProvider.OnLocaleChanged += OnLocaleChanged;
+            
+            SetLocalizedText();
         }
         private void OnDisable()
         {

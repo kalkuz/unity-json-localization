@@ -1,6 +1,6 @@
 {
   "name": "com.kalkuz.jsonlocalization",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "displayName": "Kalkuz Json Localization",
   "description": "A Localization System that makes use of json localized source files.",
   "category": "Tools",
@@ -10,6 +10,7 @@
   "changelogUrl": "",
   "licensesUrl": "",
   "dependencies": {
+    "com.unity.nuget.newtonsoft-json": "2.0.0"
  },
  "keywords": [
     "scripts",
