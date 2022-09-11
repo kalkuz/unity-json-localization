@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace KalkuzSystems.Localization
 {
@@ -30,7 +31,6 @@ namespace KalkuzSystems.Localization
         {
             EnsureDirectoryExistence();
             EnsureInstanceExistence();
-            GetLocales();
         }
         
         private IEnumerator Start()
@@ -58,10 +58,13 @@ namespace KalkuzSystems.Localization
         }
         private static void EnsureDirectoryExistence()
         {
-            if (Directory.Exists(LOCALIZATION_FOLDER_PATH)) return;
+            if (Application.platform != RuntimePlatform.WebGLPlayer)
+            {
+                if (Directory.Exists(LOCALIZATION_FOLDER_PATH)) return;
             
-            Debug.Log("StreamingAssets/Localization directory did not exist. Creating...");
-            Directory.CreateDirectory(LOCALIZATION_FOLDER_PATH);
+                Debug.Log("StreamingAssets/Localization directory did not exist. Creating...");
+                Directory.CreateDirectory(LOCALIZATION_FOLDER_PATH);
+            }
 
 #if UNITY_EDITOR
             UnityEditor.AssetDatabase.Refresh();
@@ -72,26 +75,49 @@ namespace KalkuzSystems.Localization
 
         public static void ChangeLocale(string localeID)
         {
-            m_instance.LoadLocalizationAsset(localeID);
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
+            {
+                m_instance.StartCoroutine(m_instance.LoadLocalizationAssetWebRequest(localeID));
+            }
+            else
+            {
+                m_instance.LoadLocalizationAsset(localeID);
+            }
             PlayerPrefs.SetString(PLAYER_PREFS_LAST_LOCALE_KEY, localeID);
+        }
+
+        private IEnumerator LoadLocalizationAssetWebRequest(string localeID)
+        {
+            var jsonPath = GetJsonPath(localeID);
             
+            var json = "";
+            var uwr = UnityWebRequest.Get(jsonPath);
+            yield return uwr.SendWebRequest();
+            
+            json = uwr.downloadHandler.text;
+            
+            strings = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             m_onLocaleChanged?.Invoke();
         }
+
         private void LoadLocalizationAsset(string localeID)
         {
             var jsonPath = GetJsonPath(localeID);
+
+            var json = "";
             if (!File.Exists(jsonPath))
             {
                 Debug.Log($"StreamingAssets/Localization/{localeID}.json is not found.");
                 return;
             }
             
-            string json;
             using (StreamReader reader = new StreamReader(jsonPath))
             {
                 json = reader.ReadToEnd();
             }
+            
             strings = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            m_onLocaleChanged?.Invoke();
         }
         public static string TryReadLocalizedString(string key)
         {

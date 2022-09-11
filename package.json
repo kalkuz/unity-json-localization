@@ -1,6 +1,6 @@
 {
   "name": "com.kalkuz.jsonlocalization",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "displayName": "Kalkuz Json Localization",
   "description": "A Localization System that makes use of json localized source files.",
   "category": "Tools",
