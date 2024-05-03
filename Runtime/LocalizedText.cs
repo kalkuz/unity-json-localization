@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KalkuzSystems.Localization
+namespace Kalkuz.Localization
 {
     [RequireComponent(typeof(Text))]
     public class LocalizedText : MonoBehaviour

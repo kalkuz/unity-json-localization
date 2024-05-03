@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace KalkuzSystems.Localization
+namespace Kalkuz.Localization
 {
     public class LocalizationProvider : MonoBehaviour
     {

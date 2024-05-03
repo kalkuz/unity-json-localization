@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
 
-namespace KalkuzSystems.Localization
+namespace Kalkuz.Localization
 {
     internal class LocaleEditor : EditorWindow
     {

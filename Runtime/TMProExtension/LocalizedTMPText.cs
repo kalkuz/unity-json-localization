@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace KalkuzSystems.Localization
+namespace Kalkuz.Localization
 {
     [RequireComponent(typeof(TMP_Text))]
     public class LocalizedTMPText : MonoBehaviour
